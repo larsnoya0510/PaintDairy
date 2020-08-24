@@ -32,4 +32,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    //MaterialCalendarView
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
+    //anko sqlite 0.10.7
+    implementation "org.jetbrains.anko:anko-sqlite:0.10.7"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 }
