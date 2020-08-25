@@ -1,8 +1,10 @@
 package com.example.paintdairy
 
 import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -11,6 +13,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mGetDateHasDrawViewModel : GetDateHasDrawViewModel
     private lateinit var mGetDateHasDrawObserve: Observer<MutableList<String>>
     var dates = ArrayList<CalendarDay>()
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,9 +36,10 @@ class MainActivity : AppCompatActivity() {
                 calendarView.removeDecorator(mEventDecorator)
                 calendarView.invalidateDecorators()
                 for(i in 0 until  it.size) {
-                    var year = it[i].substring(0,4).toInt()
-                    var month = it[i].substring(4,6).toInt()
-                    var day = it[i].substring(6,8).toInt()
+                    val mCal = convertStringToDate(it[i])
+                    val year = mCal.get(Calendar.YEAR)
+                    val month = mCal.get(Calendar.MONTH)+1
+                    val day = mCal.get(Calendar.DAY_OF_MONTH)
                     dates.add(CalendarDay.from(year,month,day ))
                 }
                 calendarView.addDecorator(EventDecorator(Color.RED,dates))
@@ -42,21 +47,15 @@ class MainActivity : AppCompatActivity() {
         }
         mGetDateHasDrawViewModel.getData().observe(this,mGetDateHasDrawObserve)
 
-        mGetDateHasDrawViewModel.getDateHasDraw()
-
-//        var dates = ArrayList<CalendarDay>()
-//        dates.add(CalendarDay.from(2020,8,23))
-//        var mEventDecorator = EventDecorator(Color.RED,dates)
-//        calendarView.addDecorator(mEventDecorator)
         calendarView.setOnDateChangedListener { widget, date, selected ->
             println("ZZZZZ $date")
-//            calendarView.removeDecorator(mEventDecorator)
-//            calendarView.invalidateDecorators()
-//            dates.clear()
-//            dates.add(CalendarDay.from(2020,8,24))
-//            dates.add(CalendarDay.from(2020,8,21))
-//            calendarView.addDecorator(EventDecorator(Color.RED,dates))
+
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mGetDateHasDrawViewModel.getDateHasDraw()
     }
     fun convertLongToTime(time: Long): String {
         val date = Date(time)
@@ -71,5 +70,24 @@ class MainActivity : AppCompatActivity() {
     fun convertDateToLong(date: String): Long {
         val df = SimpleDateFormat("yyyyMMdd")
         return df.parse(date).time
+    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun convertStringToDate2(date: String): LocalDate {
+//        val df = SimpleDateFormat("yyyyMMdd")
+//        val dateTrans = LocalDate.parse(date,DateTimeFormatter.ofPattern("yyyyMMdd"))
+//        val year = dateTrans.year
+//        val month = dateTrans.month
+//        val day = dateTrans.dayOfMonth
+//        return dateTrans
+//    }
+    fun convertStringToDate(date: String): Calendar {
+        val df = SimpleDateFormat("yyyyMMdd")
+        val datetime= df.parse(date).time
+        val mCal= Calendar.getInstance(Locale.TAIWAN)
+        mCal.timeInMillis = datetime
+//        val year = mCal.get(Calendar.YEAR)
+//        val month = mCal.get(Calendar.MONTH)
+//        val day = mCal.get(Calendar.DAY_OF_MONTH)
+        return mCal
     }
 }
