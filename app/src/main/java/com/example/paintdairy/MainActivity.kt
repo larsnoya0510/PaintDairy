@@ -9,13 +9,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.paintdairy.viewmodel.GetDateHasDrawViewModel
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
+import org.threeten.bp.DateTimeUtils.toLocalDate
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneId
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var SqlConnect : DBHelper
@@ -36,10 +41,10 @@ class MainActivity : AppCompatActivity() {
                 calendarView.removeDecorator(mEventDecorator)
                 calendarView.invalidateDecorators()
                 for(i in 0 until  it.size) {
-                    val mCal = convertStringToDate(it[i])
-                    val year = mCal.get(Calendar.YEAR)
-                    val month = mCal.get(Calendar.MONTH)+1
-                    val day = mCal.get(Calendar.DAY_OF_MONTH)
+                    val mLocalDate=convertStringToDate(it[i])
+                    val year = mLocalDate.year
+                    val month = mLocalDate.month.value
+                    val day = mLocalDate.dayOfMonth
                     dates.add(CalendarDay.from(year,month,day ))
                 }
                 calendarView.addDecorator(EventDecorator(Color.RED,dates))
@@ -80,14 +85,22 @@ class MainActivity : AppCompatActivity() {
 //        val day = dateTrans.dayOfMonth
 //        return dateTrans
 //    }
-    fun convertStringToDate(date: String): Calendar {
+    fun convertStringToDate(date: String): LocalDate {
         val df = SimpleDateFormat("yyyyMMdd")
-        val datetime= df.parse(date).time
-        val mCal= Calendar.getInstance(Locale.TAIWAN)
-        mCal.timeInMillis = datetime
-//        val year = mCal.get(Calendar.YEAR)
-//        val month = mCal.get(Calendar.MONTH)
-//        val day = mCal.get(Calendar.DAY_OF_MONTH)
-        return mCal
+        val dateTrans = Instant.ofEpochMilli(df.parse(date).time).atZone(ZoneId.systemDefault()).toLocalDate()
+        val year = dateTrans.year
+        val month = dateTrans.month.value
+        val day = dateTrans.dayOfMonth
+        return dateTrans
     }
+//    fun convertStringToDate(date: String): Calendar {
+//        val df = SimpleDateFormat("yyyyMMdd")
+//        val datetime= df.parse(date).time
+//        val mCal= Calendar.getInstance(Locale.TAIWAN)
+//        mCal.timeInMillis = datetime
+////        val year = mCal.get(Calendar.YEAR)
+////        val month = mCal.get(Calendar.MONTH)
+////        val day = mCal.get(Calendar.DAY_OF_MONTH)
+//        return mCal
+//    }
 }
