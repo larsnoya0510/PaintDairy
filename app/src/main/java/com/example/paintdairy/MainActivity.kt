@@ -1,5 +1,6 @@
 package com.example.paintdairy
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -27,20 +28,22 @@ class MainActivity : AppCompatActivity() {
     lateinit var SqlConnect : DBHelper
     lateinit var mGetDateHasDrawViewModel : GetDateHasDrawViewModel
     private lateinit var mGetDateHasDrawObserve: Observer<MutableList<String>>
+    lateinit var mEventDecorator : EventDecorator
     var dates = ArrayList<CalendarDay>()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         SqlConnect=DBHelper.getInstance(this.applicationContext)
-        var mEventDecorator = EventDecorator(Color.RED,dates)
+        mEventDecorator = EventDecorator(Color.RED,dates)
+        calendarView.addDecorator(TodayDecorator(CalendarDay.today(),this))
         mGetDateHasDrawViewModel = ViewModelProvider(this).get(GetDateHasDrawViewModel::class.java)
         mGetDateHasDrawViewModel.mDBHelper = SqlConnect
         mGetDateHasDrawObserve = Observer {
+            dates.clear()
+            calendarView.removeDecorator(mEventDecorator)
+//            calendarView.invalidateDecorators()
             if(it.size>0){
-                dates.clear()
-                calendarView.removeDecorator(mEventDecorator)
-                calendarView.invalidateDecorators()
                 for(i in 0 until  it.size) {
                     val mLocalDate=convertStringToDate(it[i])
                     val year = mLocalDate.year
@@ -48,9 +51,11 @@ class MainActivity : AppCompatActivity() {
                     val day = mLocalDate.dayOfMonth
                     dates.add(CalendarDay.from(year,month,day ))
                 }
-                calendarView.addDecorator(EventDecorator(Color.RED,dates))
-                calendarView.addDecorator(TodayDecorator(CalendarDay.today(),this))
+                mEventDecorator = EventDecorator(Color.RED,dates)
+                calendarView.addDecorator(mEventDecorator)
+
             }
+            calendarView.invalidateDecorators()
         }
         mGetDateHasDrawViewModel.getData().observe(this,mGetDateHasDrawObserve)
 
@@ -60,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             val dateFormmat = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.getDefault())
             val mDate=date.date.format(dateFormmat)
             intent.putExtra("Date",mDate)
-            startActivity(intent)
+            startActivityForResult(intent, Companion.OPENDRAWACTIVITY)
         }
 
     }
@@ -104,5 +109,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         mGetDateHasDrawViewModel.getData().removeObserver(mGetDateHasDrawObserve)
         super.onDestroy()
+    }
+
+    companion object {
+        const val OPENDRAWACTIVITY = 100
     }
 }
