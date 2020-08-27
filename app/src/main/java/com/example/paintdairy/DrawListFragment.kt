@@ -110,4 +110,9 @@ class DrawListFragment : Fragment() {
         val mDate = (activity as DateActivity).mDate
         mGetDrawsByDateViewModel.getDrawsByDate(mDate)
     }
+
+    override fun onDestroy() {
+        mGetDrawsByDateViewModel.getData().removeObserver(mGetDrawsByDateObserve)
+        super.onDestroy()
+    }
 }

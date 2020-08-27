@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
                     dates.add(CalendarDay.from(year,month,day ))
                 }
                 calendarView.addDecorator(EventDecorator(Color.RED,dates))
+                calendarView.addDecorator(TodayDecorator(CalendarDay.today(),this))
             }
         }
         mGetDateHasDrawViewModel.getData().observe(this,mGetDateHasDrawObserve)
@@ -61,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra("Date",mDate)
             startActivity(intent)
         }
+
     }
 
     override fun onResume() {
@@ -98,14 +100,9 @@ class MainActivity : AppCompatActivity() {
         val day = dateTrans.dayOfMonth
         return dateTrans
     }
-//    fun convertStringToDate(date: String): Calendar {
-//        val df = SimpleDateFormat("yyyyMMdd")
-//        val datetime= df.parse(date).time
-//        val mCal= Calendar.getInstance(Locale.TAIWAN)
-//        mCal.timeInMillis = datetime
-////        val year = mCal.get(Calendar.YEAR)
-////        val month = mCal.get(Calendar.MONTH)
-////        val day = mCal.get(Calendar.DAY_OF_MONTH)
-//        return mCal
-//    }
+
+    override fun onDestroy() {
+        mGetDateHasDrawViewModel.getData().removeObserver(mGetDateHasDrawObserve)
+        super.onDestroy()
+    }
 }
