@@ -1,5 +1,6 @@
 package com.example.paintdairy
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -13,13 +14,13 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import org.threeten.bp.DateTimeUtils.toLocalDate
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +55,11 @@ class MainActivity : AppCompatActivity() {
 
         calendarView.setOnDateChangedListener { widget, date, selected ->
             println("ZZZZZ $date")
-
+            val intent =Intent(this,DateActivity::class.java)
+            val dateFormmat = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.getDefault())
+            val mDate=date.date.format(dateFormmat)
+            intent.putExtra("Date",mDate)
+            startActivity(intent)
         }
     }
 

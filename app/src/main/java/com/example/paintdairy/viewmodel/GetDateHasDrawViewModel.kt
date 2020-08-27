@@ -11,7 +11,7 @@ class GetDateHasDrawViewModel() : ViewModel() {
 
     fun getDateHasDraw() {
         var dateList =mDBHelper?.queryDateHasDraw(null)?.toMutableList()
-        dateList?.add("20200823")
+//        dateList?.add("20200823")
         getDateHasDrawData.value = dateList
     }
 
