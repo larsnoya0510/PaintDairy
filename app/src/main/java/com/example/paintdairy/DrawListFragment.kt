@@ -38,7 +38,7 @@ class DrawListFragment : Fragment() {
                 R.id.fragmentContainer,
                 fragmentPool.mDrawFragment,
                 "DrawFragment"
-            ).addToBackStack("DrawFragment")
+            ).addToBackStack(null)
             transaction.commit()
         }
         drawListFragmentRootView.floatingActionButtonDeleteDraw.setOnClickListener {

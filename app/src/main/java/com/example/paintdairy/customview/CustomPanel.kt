@@ -17,10 +17,11 @@ import org.threeten.bp.format.DateTimeFormatter
 import java.io.FileOutputStream
 
 class CustomPanel : View {
-    var points = ArrayList<PointF>()
+//    var points = ArrayList<PointF>()
+    var points = ArrayList<PointState>()
     lateinit var vBitmap : Bitmap
-    private lateinit var vBitmapCanvas : Canvas
-    private lateinit var mpaint : Paint
+    lateinit var vBitmapCanvas : Canvas
+    lateinit var mpaint : Paint
 
     var drawColor : Int = Color.RED
     var drawStyle : Paint.Style =Paint.Style.STROKE
@@ -31,7 +32,7 @@ class CustomPanel : View {
         this.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,
             ConstraintLayout.LayoutParams.WRAP_CONTENT)
         this.post {
-            vBitmap = Bitmap.createBitmap(this.width,this.height,Bitmap.Config.RGB_565)
+            vBitmap = Bitmap.createBitmap(this.width,this.height,Bitmap.Config.ARGB_8888)
             vBitmapCanvas = Canvas(vBitmap)
             vBitmapCanvas.drawColor(paintBackGroundColor)
         }
@@ -40,11 +41,15 @@ class CustomPanel : View {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         for (i in 1 until points.size) {
-            val p1 = points[i - 1]
-            val p2 = points[i]
+            val p1 = points[i - 1].mPointF
+            val p2 = points[i].mPointF
+//            if (Math.abs(p1.x - p2.x) < 50 && Math.abs(p1.y - p2.y) < 50) {
+//                canvas?.drawLine(p1.x, p1.y, p2.x, p2.y, mpaint)
+//                vBitmapCanvas.drawLine(p1.x, p1.y, p2.x, p2.y, mpaint)
+//            }
             if (Math.abs(p1.x - p2.x) < 50 && Math.abs(p1.y - p2.y) < 50) {
-                canvas?.drawLine(p1.x, p1.y, p2.x, p2.y, mpaint)
-                vBitmapCanvas.drawLine(p1.x, p1.y, p2.x, p2.y, mpaint)
+                canvas?.drawLine(p1.x, p1.y, p2.x, p2.y, points[i].mPaint)
+                vBitmapCanvas.drawLine(p1.x, p1.y, p2.x, p2.y, points[i].mPaint)
             }
         }
     }
@@ -52,7 +57,14 @@ class CustomPanel : View {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if(event!=null) {
             for (i in 0 until event.getHistorySize()) {
-                points.add(PointF(event?.getHistoricalX(i), event?.getHistoricalY(i)))
+                var  mpaint = Paint()
+                mpaint.color = drawColor
+                mpaint.style = drawStyle
+                mpaint.strokeWidth = drawWidth
+//                points.add(PointF(event?.getHistoricalX(i), event?.getHistoricalY(i)))
+                val mPointState = PointState(PointF(event?.getHistoricalX(i), event?.getHistoricalY(i)),mpaint)
+                points.add(mPointState)
+
             }
             this.invalidate()
         }
@@ -135,3 +147,7 @@ class CustomPanel : View {
     }
 
 }
+data class PointState(
+    var mPointF : PointF,
+    var mPaint : Paint
+    )

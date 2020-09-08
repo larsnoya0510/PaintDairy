@@ -2,13 +2,17 @@ package com.example.paintdairy
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
+import com.example.paintdairy.viewmodel.DrawPanelControlViewModel
 
 class DateActivity : AppCompatActivity() {
+    lateinit var mDrawPanelControlViewModel : DrawPanelControlViewModel
     lateinit var fragmentPool : FragmentPool
     var mDate=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_date)
+        mDrawPanelControlViewModel = ViewModelProvider(this).get(DrawPanelControlViewModel::class.java)
         mDate= intent.getStringExtra("Date") ?: ""
         fragmentPool = FragmentPool()
         initStartFragment()
