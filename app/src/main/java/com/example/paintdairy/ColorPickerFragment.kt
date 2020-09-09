@@ -85,12 +85,16 @@ class ColorPickerFragment : Fragment() {
     private fun clickBackIcon() {
         when(type){
             "DrawColor" ->{
-                val ColorDrawable = colorPickerFragmentRootView.imageViewColorDemo.background as ColorDrawable
-                mDrawPanelControlViewModel.setDrawColor(ColorDrawable.color)
+                val ColorDrawable = colorPickerFragmentRootView.imageViewColorDemo.background as ColorDrawable?
+                if(ColorDrawable != null) {
+                    mDrawPanelControlViewModel.setDrawColor(ColorDrawable.color)
+                }
             }
             "BackGroundColor" ->{
-                val ColorDrawable = colorPickerFragmentRootView.imageViewColorDemo.background as ColorDrawable
-                mDrawPanelControlViewModel.setPaintBackGroundColor(ColorDrawable.color)
+                val ColorDrawable = colorPickerFragmentRootView.imageViewColorDemo.background as ColorDrawable?
+                if(ColorDrawable != null) {
+                    mDrawPanelControlViewModel.setPaintBackGroundColor(ColorDrawable.color)
+                }
             }
         }
 //        if(this.parentFragmentManager!!.backStackEntryCount>0){
