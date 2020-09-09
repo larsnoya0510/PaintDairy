@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.example.paintdairy.dataclass.Draws
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
+import org.jetbrains.anko.db.transaction
+import java.lang.Exception
 
 class DBHelper(var context: Context) :
     ManagedSQLiteOpenHelper(context,"paintDiary.db", null, 1) {
@@ -111,26 +113,39 @@ class DBHelper(var context: Context) :
     fun insert(infoArray: MutableList<Draws>): Long {
         Log.d("TAG", "start insert")
         var result: Long = -1
-        for (i in infoArray.indices) {
-            val info = infoArray[i]
-            //var tempArray: List<bookmarkInfo>
-            val cv = ContentValues()
-            cv.put("DrawPath", info.drawPath)
-            cv.put("Date", info.date)
-            use {
-                result = insert("Draws", "", cv)
+        use {
+                this.beginTransaction()
+                try {
+                    for (i in infoArray.indices) {
+                        val info = infoArray[i]
+                        //var tempArray: List<bookmarkInfo>
+                        val cv = ContentValues()
+                        cv.put("DrawPath", info.drawPath)
+                        cv.put("Date", info.date)
+                        result = insert("Draws", "", cv)
+                    }
+                    this.setTransactionSuccessful()
+                }catch (e :Exception){
+
+                }finally {
+                    this.endTransaction()
+                }
             }
-            if (result == -1L) {
-                return result
-            }
-        }
         return result
     }
     fun delete( condition: String): Int {
         Log.d("TAG", "start delete")
-        var count = 0
+        var count = -1
         use {
-            count = delete("Draws", condition, null)
+            this.beginTransaction()
+            try {
+                count = delete("Draws", condition, null)
+                this.setTransactionSuccessful()
+            }catch (e :Exception){
+
+            }finally {
+                this.endTransaction()
+            }
         }
         return count
     }
