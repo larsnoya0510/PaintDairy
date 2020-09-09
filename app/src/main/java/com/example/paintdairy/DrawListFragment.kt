@@ -9,12 +9,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.paintdairy.adapter.RecyclerViewDrawListAdapter
 import com.example.paintdairy.dataclass.Draws
 import com.example.paintdairy.viewmodel.GetDrawsByDateViewModel
 import kotlinx.android.synthetic.main.fragment_draw_list.view.*
+import androidx.recyclerview.widget.DividerItemDecoration
+
+
 
 class DrawListFragment : Fragment() {
     lateinit var SqlConnect : DBHelper
@@ -79,7 +84,7 @@ class DrawListFragment : Fragment() {
                 mRecyclerViewDrawListAdapter.Refresh()
             }
         })
-        drawListFragmentRootView.recyclerViewDrawList.layoutManager = LinearLayoutManager(this.context)
+        drawListFragmentRootView.recyclerViewDrawList.layoutManager = GridLayoutManager(this.context,3)
         drawListFragmentRootView.recyclerViewDrawList.adapter = mRecyclerViewDrawListAdapter
 
         SqlConnect=DBHelper.getInstance(this.context!!.applicationContext)
