@@ -39,6 +39,7 @@ class DrawPanelControlViewModel : ViewModel() {
     fun setPaintBackGroundColor(mColor: Int){
         var mPanel: CustomPanel = drawPanelLiveData.value!!
         mPanel.setBackgroundColor(mColor)
+        mPanel.paintBackGroundColor = mColor
 //        mPanel.vBitmapCanvas.drawColor(mColor)
         drawPanelLiveData.value = mPanel
     }

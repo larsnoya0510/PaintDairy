@@ -56,6 +56,9 @@ class DrawFragment : Fragment() {
         mDrawPanelControlViewModel.setDrawPanelData(mCustomPanel!!)
         mDrawPanelControlObserve = Observer {
             it.invalidate()
+            drawFragmentRootView.viewDrawColorDemo.setBackgroundColor(it.drawColor)
+            drawFragmentRootView.viewBackgroundColorDemo.setBackgroundColor(it.paintBackGroundColor)
+            drawFragmentRootView.seekBarSetDrawWidth.progress = it.drawWidth
         }
         mDrawPanelControlViewModel.getDrawPanelData().observe(viewLifecycleOwner,mDrawPanelControlObserve)
 
@@ -74,6 +77,9 @@ class DrawFragment : Fragment() {
             mFragment.arguments?.clear()
             var mBundle = Bundle()
             mBundle.putString("Type","DrawColor")
+//            mBundle.putInt("Color",mCustomPanel!!.drawColor!!)
+            mBundle.putInt("Color",mDrawPanelControlViewModel.getDrawPanelData().value?.drawColor!!)
+
             mFragment.arguments = mBundle
             val transaction = this.parentFragmentManager.beginTransaction()
             transaction.add(
@@ -88,6 +94,8 @@ class DrawFragment : Fragment() {
             mFragment.arguments?.clear()
             var mBundle = Bundle()
             mBundle.putString("Type","BackGroundColor")
+//            mBundle.putInt("Color",mCustomPanel!!.paintBackGroundColor!!)
+            mBundle.putInt("Color",mDrawPanelControlViewModel.getDrawPanelData().value?.paintBackGroundColor!!)
             mFragment.arguments = mBundle
             val transaction = this.parentFragmentManager.beginTransaction()
             transaction.add(

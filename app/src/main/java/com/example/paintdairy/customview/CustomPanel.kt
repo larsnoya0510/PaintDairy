@@ -29,8 +29,8 @@ class CustomPanel : View {
     lateinit var vBitmapCanvas : Canvas
     lateinit var mpaint : Paint
 
-    var drawColor : Int = Color.RED
-    var drawStyle : Paint.Style =Paint.Style.STROKE
+    var drawColor : Int = Color.BLACK
+    var drawStyle : Paint.Style =Paint.Style.FILL
     var drawWidth :Float =10F
     var paintBackGroundColor = Color.WHITE
     constructor(context: Context?,attrs: AttributeSet) : super(context,attrs) {
@@ -137,8 +137,8 @@ class CustomPanel : View {
         }
     }
     private fun initDrawSetting() {
-        drawColor = Color.RED
-        drawStyle  =Paint.Style.STROKE
+        drawColor = Color.BLACK
+        drawStyle  =Paint.Style.FILL
         drawWidth  =10F
         mpaint = Paint()
         mpaint.color = drawColor

@@ -99,6 +99,15 @@
         app:layout_constraintTop_toBottomOf="@+id/mPanel"
         app:layout_constraintVertical_bias="1.0">
 
+        <View
+            android:id="@+id/viewDrawColorDemo"
+            android:layout_width="50dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/textViewDrawColor"
+            app:layout_constraintStart_toStartOf="@+id/textViewDrawColor"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/imageViewDrawColor"
             android:layout_width="wrap_content"
@@ -130,6 +139,15 @@
         app:layout_constraintStart_toEndOf="@+id/constraintLayoutDrawColor"
         app:layout_constraintTop_toBottomOf="@+id/mPanel"
         app:layout_constraintVertical_bias="0.0">
+
+        <View
+            android:id="@+id/viewBackgroundColorDemo"
+            android:layout_width="50dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/textViewBackGroundColor"
+            app:layout_constraintStart_toStartOf="@+id/textViewBackGroundColor"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageViewBackGroundColor"

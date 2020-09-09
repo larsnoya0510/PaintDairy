@@ -9,6 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.paintdairy.customview.CustomPanel
@@ -19,6 +23,7 @@ class ColorPickerFragment : Fragment() {
     lateinit var colorPickerFragmentRootView : View
     lateinit var mDrawPanelControlViewModel : DrawPanelControlViewModel
     lateinit var type : String
+    var color :Int = Color.WHITE
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,10 +33,16 @@ class ColorPickerFragment : Fragment() {
         mDrawPanelControlViewModel = ViewModelProvider(activity as DateActivity).get(
             DrawPanelControlViewModel::class.java)
         colorPickerFragmentRootView= inflater.inflate(R.layout.fragment_color_picker, container, false)
+        return colorPickerFragmentRootView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //init get color
+        initGetColor()
         colorPickerFragmentRootView.seekBarA.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 checkColor()
-                colorPickerFragmentRootView.textViewColorAlphaProgress.text = progress.toString()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -40,7 +51,6 @@ class ColorPickerFragment : Fragment() {
         colorPickerFragmentRootView.seekBarR.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 checkColor()
-                colorPickerFragmentRootView.textViewColorRedProgress.text = progress.toString()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -49,7 +59,6 @@ class ColorPickerFragment : Fragment() {
         colorPickerFragmentRootView.seekBarG.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 checkColor()
-                colorPickerFragmentRootView.textViewColorGreenProgress.text = progress.toString()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -58,13 +67,19 @@ class ColorPickerFragment : Fragment() {
         colorPickerFragmentRootView.seekBarB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 checkColor()
-                colorPickerFragmentRootView.textViewColorBlueProgress.text = progress.toString()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 
         })
-        return colorPickerFragmentRootView
+    }
+    private fun initGetColor() {
+        color = arguments?.getInt("Color") ?: Color.WHITE
+        colorPickerFragmentRootView.seekBarA.progress = color.alpha
+        colorPickerFragmentRootView.seekBarR.progress = color.red
+        colorPickerFragmentRootView.seekBarG.progress = color.green
+        colorPickerFragmentRootView.seekBarB.progress = color.blue
+        checkColor()
     }
 
     private fun checkColor() {
@@ -76,6 +91,11 @@ class ColorPickerFragment : Fragment() {
 
         val color = Color.parseColor(colorHex)
         colorPickerFragmentRootView.imageViewColorDemo.setBackgroundColor(color)
+        colorPickerFragmentRootView.textViewColorAlphaProgress.text = colorPickerFragmentRootView.seekBarA.progress.toString()
+        colorPickerFragmentRootView.textViewColorRedProgress.text =  colorPickerFragmentRootView.seekBarR.progress.toString()
+        colorPickerFragmentRootView.textViewColorGreenProgress.text =  colorPickerFragmentRootView.seekBarG.progress.toString()
+        colorPickerFragmentRootView.textViewColorBlueProgress.text = colorPickerFragmentRootView.seekBarB.progress.toString()
+
     }
 
     companion object {
