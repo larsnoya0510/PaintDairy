@@ -11,10 +11,16 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.paintdairy.DBHelper
 import com.example.paintdairy.dataclass.Draws
+import com.example.paintdairy.dataclass.PointState
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.FileOutputStream
+import android.graphics.Bitmap
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+
+
 
 class CustomPanel : View {
 //    var points = ArrayList<PointF>()
@@ -92,12 +98,6 @@ class CustomPanel : View {
                 var mDraws = Draws(null,"${dateString}-${timeString}.jpg",dateString)
                 val mDrawsList = mutableListOf<Draws>(mDraws)
                 var result=SqlConnect.insert(mDrawsList)
-//                if(result==1L){
-//                    println("ZZZZZ  Done")
-//                }
-//                else{
-//                    println("ZZZZZ  Fail")
-//                }
             } catch (x: Exception) {
                 x.printStackTrace()
             }
@@ -112,7 +112,12 @@ class CustomPanel : View {
                 val timeString  = time.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
                 val path = context.getExternalFilesDir(null)!!.toString() + "/${dateString}-${timeString}.jpg"
                 val fout = FileOutputStream(path)
-                vBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
+                //***old get panel's bitmap, that will not contain background***
+                //vBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
+                //retake all view to bitmap
+                val mBitmap = convertViewToBitmap(this)
+                mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
+
                 fout.close()
                 //寫入到SQL
                 var mDraws = Draws(null,"${dateString}-${timeString}.jpg",dateString)
@@ -132,9 +137,9 @@ class CustomPanel : View {
         }
     }
     private fun initDrawSetting() {
-         drawColor = Color.RED
-         drawStyle  =Paint.Style.STROKE
-         drawWidth  =10F
+        drawColor = Color.RED
+        drawStyle  =Paint.Style.STROKE
+        drawWidth  =10F
         mpaint = Paint()
         mpaint.color = drawColor
         mpaint.style = drawStyle
@@ -145,9 +150,10 @@ class CustomPanel : View {
         mpaint.style = drawStyle
         mpaint.strokeWidth = drawWidth
     }
-
+    fun convertViewToBitmap(view:View):Bitmap {
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        view.draw(canvas)
+        return bitmap
+    }
 }
-data class PointState(
-    var mPointF : PointF,
-    var mPaint : Paint
-    )
