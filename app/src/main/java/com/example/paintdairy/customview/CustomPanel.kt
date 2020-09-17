@@ -24,6 +24,7 @@ import android.opengl.ETC1.getWidth
 
 class CustomPanel : View {
 //    var points = ArrayList<PointF>()
+    var enableTouch =true
     var points = ArrayList<PointState>()
     lateinit var vBitmap : Bitmap
     lateinit var vBitmapCanvas : Canvas
@@ -61,7 +62,7 @@ class CustomPanel : View {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if(event!=null) {
+        if(event!=null && enableTouch ==true) {
             for (i in 0 until event.getHistorySize()) {
                 var  mpaint = Paint()
                 mpaint.color = drawColor
@@ -156,4 +157,5 @@ class CustomPanel : View {
         view.draw(canvas)
         return bitmap
     }
+
 }

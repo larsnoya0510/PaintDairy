@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -18,17 +19,21 @@ import kotlinx.android.synthetic.main.fragment_draw.view.*
 class DrawFragment : Fragment() {
     lateinit var fragmentPool:FragmentPool
     lateinit var drawFragmentRootView:View
+    lateinit var popupMenu : PopupMenu
     private var mCustomPanel: CustomPanel? = null
     private lateinit var mSeekBarSetDrawWidth : CustomVerticalSeekBar
     lateinit var mDrawPanelControlViewModel : DrawPanelControlViewModel
     private lateinit var mDrawPanelControlObserve: Observer<CustomPanel>
+    var mode : String? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         fragmentPool = (activity as DateActivity).fragmentPool
         drawFragmentRootView= inflater.inflate(R.layout.fragment_draw, container, false)
+        initPopupMenu(drawFragmentRootView.floatingActionButtonDrawMenu)
         mCustomPanel = drawFragmentRootView.findViewById(R.id.mPanel)
+        initMode()
         mSeekBarSetDrawWidth = drawFragmentRootView.findViewById(R.id.seekBarSetDrawWidth)
 
         mSeekBarSetDrawWidth.setOnStateChangeListener(object : CustomVerticalSeekBar.OnStateChangeListener{
@@ -39,7 +44,8 @@ class DrawFragment : Fragment() {
             override fun onStopTrackingTouch(view: View?, progress: Float) {}
         })
         drawFragmentRootView.floatingActionButtonDrawMenu.setOnClickListener {
-            popupMenu(it)
+//            popupMenu(it)
+            popupMenu.show()
         }
 //        drawFragmentRootView.buttonSave.setOnClickListener {
 ////            mCustomPanel?.savePicture()
@@ -109,6 +115,22 @@ class DrawFragment : Fragment() {
 
         return drawFragmentRootView
     }
+
+    private fun initMode() {
+        mode = arguments?.getString("Mode")
+        when (mode) {
+            "View" -> {
+                mCustomPanel?.enableTouch = false
+            }
+            "New" -> {
+                mCustomPanel?.enableTouch = true
+            }
+            else -> {
+                mCustomPanel?.enableTouch = true
+            }
+        }
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() = DrawFragment()
@@ -120,8 +142,8 @@ class DrawFragment : Fragment() {
             this.activity!!.finish()
         }
     }
-    fun popupMenu(view:View){
-        val popupMenu = PopupMenu(context!!, view)
+    fun initPopupMenu(view:View){
+        popupMenu = PopupMenu(context!!, view)
         popupMenu.getMenuInflater().inflate(R.menu.draw_menu, popupMenu.getMenu())
         popupMenu.setOnMenuItemClickListener {
             when(it.itemId){
@@ -140,6 +162,7 @@ class DrawFragment : Fragment() {
         popupMenu.setOnDismissListener {
 
         }
-        popupMenu.show()
+//        popupMenu.show()
     }
+
 }

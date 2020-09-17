@@ -10,15 +10,11 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.paintdairy.adapter.RecyclerViewDrawListAdapter
 import com.example.paintdairy.dataclass.Draws
 import com.example.paintdairy.viewmodel.GetDrawsByDateViewModel
 import kotlinx.android.synthetic.main.fragment_draw_list.view.*
-import androidx.recyclerview.widget.DividerItemDecoration
-
 
 
 class DrawListFragment : Fragment() {
@@ -28,16 +24,21 @@ class DrawListFragment : Fragment() {
     lateinit var mGetDrawsByDateViewModel : GetDrawsByDateViewModel
     private lateinit var mGetDrawsByDateObserve: Observer<MutableList<Draws>>
     lateinit var mRecyclerViewDrawListAdapter:RecyclerViewDrawListAdapter
-    lateinit var deleteList : MutableList<Draws>
+    lateinit var selectList : MutableList<Draws>
+    enum class DrawFragmentMode{
+        View ,
+        New
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        deleteList = mutableListOf<Draws>()
+        selectList = mutableListOf<Draws>()
         fragmentPool = (activity as DateActivity).fragmentPool
         drawListFragmentRootView= inflater.inflate(R.layout.fragment_draw_list, container, false)
         drawListFragmentRootView.floatingActionButtonAddDraw.setOnClickListener {
+//            openDrawFragmentMode(DrawFragmentMode.New)
             val transaction = this.parentFragmentManager.beginTransaction()
             transaction.replace(
                 R.id.fragmentContainer,
@@ -47,9 +48,9 @@ class DrawListFragment : Fragment() {
             transaction.commit()
         }
         drawListFragmentRootView.floatingActionButtonDeleteDraw.setOnClickListener {
-            if(deleteList.size >0){
+            if(selectList.size >0){
                 var deleteCmd : String = """ 
-                     drawPath in (${deleteList.map { it.drawPath }.joinToString("','", "'","'")})
+                     drawPath in (${selectList.map { it.drawPath }.joinToString("','", "'","'")})
                 """.trimIndent()
                 var result =SqlConnect.delete(deleteCmd)
                 when{
@@ -60,9 +61,26 @@ class DrawListFragment : Fragment() {
                         Toast.makeText(this.context,"刪除失敗",Toast.LENGTH_SHORT).show()
                     }
                 }
-                deleteList.clear()
+                selectList.clear()
             }
             mGetDrawsByDateViewModel.getDrawsByDate((activity as DateActivity).mDate)
+        }
+        drawListFragmentRootView.floatingActionButtonEditPreview.setOnClickListener {
+//            openDrawFragmentMode(DrawFragmentMode.View)
+            if(selectList.size ==1) {
+                var mFragment = fragmentPool.mPreViewFragment
+                var mBundle = Bundle()
+                mBundle.putString("Path", selectList[0].drawPath)
+                mFragment.arguments?.clear()
+                mFragment.arguments = mBundle
+                val transaction = this.parentFragmentManager.beginTransaction()
+                transaction.replace(
+                    R.id.fragmentContainer,
+                    mFragment,
+                    "PreViewFragment"
+                ).addToBackStack(null)
+                transaction.commit()
+            }
         }
         mRecyclerViewDrawListAdapter = RecyclerViewDrawListAdapter(this.context!!)
         mRecyclerViewDrawListAdapter.setOnItemCheckListener(object : RecyclerViewDrawListAdapter.OnItemCheckListener{
@@ -76,11 +94,12 @@ class DrawListFragment : Fragment() {
                 mRecyclerViewDrawListAdapter.mInList[mPosition].checked =  !mRecyclerViewDrawListAdapter.mInList[mPosition].checked
                 var mDraws = mRecyclerViewDrawListAdapter.mInList[mPosition]
                 if(mRecyclerViewDrawListAdapter.mInList[mPosition].checked==true){
-                    deleteList.add(mDraws)
+                    selectList.add(mDraws)
                 }
                 else{
-                    deleteList.remove(mDraws)
+                    selectList.remove(mDraws)
                 }
+                drawListFragmentRootView.floatingActionButtonEditPreview.isEnabled = selectList.size < 2
                 mRecyclerViewDrawListAdapter.Refresh()
             }
         })
@@ -105,6 +124,32 @@ class DrawListFragment : Fragment() {
 
         return drawListFragmentRootView
     }
+
+    private fun openDrawFragmentMode( mode : DrawFragmentMode) {
+//        var mFragment = fragmentPool.mDrawFragment
+//        mFragment.arguments?.clear()
+//        var mBundle = Bundle()
+//        when(mode){
+//            DrawFragmentMode.New ->{
+//                mBundle.putString("Mode", "New")
+//            }
+//            DrawFragmentMode.View ->{
+//                mBundle.putString("Mode", "View")
+//            }
+//            else ->{
+//                mBundle.putString("Mode", "")
+//            }
+//        }
+//        mFragment.arguments = mBundle
+//        val transaction = this.parentFragmentManager.beginTransaction()
+//        transaction.replace(
+//            R.id.fragmentContainer,
+//            mFragment,
+//            "DrawFragment"
+//        ).addToBackStack(null)
+//        transaction.commit()
+    }
+
     companion object {
         @JvmStatic
         fun newInstance() = DrawListFragment()
